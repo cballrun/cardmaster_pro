@@ -9,6 +9,7 @@ class SalesService
         while load_more_sales_button_visible? do
             click_load_more_sales_button
         end
+        get_all_sales
     end
 
     private
@@ -48,6 +49,14 @@ class SalesService
         end
         sleep 2
         load_more_sales_button.click
+    end
+
+    def get_all_sales
+        sleep 3
+        sales_list = @wait.until do
+            @driver.find_element(:css, "ul.is-modal")
+        end
+        sales_list.find_elements(:css, "li")
     end
 
 end
