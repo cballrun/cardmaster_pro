@@ -5,6 +5,15 @@ class VariantService
         @search_term = search_term
         initialize_driver
         search_variants
+        while next_page_button_visible? do
+            find_variants
+            next_page_link
+            next_page_button
+        end
+    end
+
+    def scrape_variants
+
     end
 
     private
@@ -36,11 +45,42 @@ class VariantService
         submit_button.click
     end
 
-
-
     def find_variants
         search_results = @wait.until do 
             @driver.find_elements(:css, "div.search-result__content")   
         end
+    end
+
+    def collect_variants
+        variants = find_variants
+
+    end
+
+    def safe_find_element(css_selector)
+        begin
+            element = @driver.find_element(css: css_selector)
+        rescue Selenium::WebDriver::Error::NoSuchElementError
+            element = nil
+        end
+        element
+    end
+
+    def next_page_button
+        next_button = @driver.find_elements(:css, "a.tcg-button.tcg-button--md.tcg-standard-button.tcg-standard-button--flat").last
+    end
+
+    def next_page_link
+        pagination_buttons = @driver.find_elements(:css, "a.tcg-button.tcg-button--md.tcg-standard-button.tcg-standard-button--flat")
+        next_page_link = pagination_buttons.last.attribute("href")
+        if next_page_link.class == String
+            @driver.get next_page_link
+        else
+            @driver.quit
+        end
+    end
+
+    def next_page_button_visible?
+        sleep 2
+        @wait.until { next_page_button.displayed? }
     end
 end
