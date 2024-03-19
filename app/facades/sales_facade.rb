@@ -8,7 +8,7 @@ class SalesFacade
             condition = sale.find_element(:css, "span.condition")&.text
             quantity = sale.find_element(:css, "span.quantity")&.text
             price = sale.find_element(:css, "span.price")&.text
-            binding.pry
+
             # Sale.create((date: date, condition: condition, quantity: quantity, price: price))
         end
     end
