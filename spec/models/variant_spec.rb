@@ -9,6 +9,7 @@ RSpec.describe Variant, type: :model do
   describe 'validations' do
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:url) }
+    it { should validate_presence_of(:tcgplayerid) }
     #other fields are not always present on a Variant and thus aren't validated
   end
 end
