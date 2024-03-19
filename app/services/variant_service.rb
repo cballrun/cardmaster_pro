@@ -1,4 +1,5 @@
 require "selenium-webdriver"
+require "uri"
 
 class VariantService
     def initialize(search_term)
@@ -6,7 +7,7 @@ class VariantService
         initialize_driver
         search_variants
         while next_page_button_visible? do
-            find_variants
+            collect_variants
             next_page_link
             next_page_button
         end
@@ -53,10 +54,24 @@ class VariantService
 
     def collect_variants
         variants = find_variants
-
+        variants.each do |variant|
+            link = variant.find_element(:css, "a")&.attribute("href") 
+            set = safe_find_element(variant, "h4")&.text
+            name = safe_find_element(variant, "span.search-result__title")&.text
+            rarity = safe_find_element(variant, "section.search-result__rarity")&.text
+            count = safe_find_element(variant, "span.inventory__listing-count.inventory__listing-count-block")&.text
+            low = safe_find_element(variant, "span.inventory__price")&.text
+            market = safe_find_element(variant, "span.search-result__market-price--value")&.text
+            tcgplayerid = extract_tcgplayerid(link)
+        end
     end
 
-    def safe_find_element(css_selector)
+    def extract_tcgplayerid(url)
+        match = url.match(/xid=([^&]+)/)
+        match ? match[1] : nil
+    end
+
+    def safe_find_element(variant, css_selector)
         begin
             element = @driver.find_element(css: css_selector)
         rescue Selenium::WebDriver::Error::NoSuchElementError
