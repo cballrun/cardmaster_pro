@@ -4,6 +4,9 @@ class SalesService
     def initialize(card_link)
         @card_link = card_link
         initialize_driver
+    end
+
+    def scrape_sales
         navigate_to_card_page
         click_view_more_data_button
         while load_more_sales_button_visible? do
