@@ -1,7 +1,9 @@
 require "selenium-webdriver"
 require "uri"
 
-class VariantService
+class VariantsService
+
+    
     def initialize(search_term)
         @search_term = search_term
         initialize_driver

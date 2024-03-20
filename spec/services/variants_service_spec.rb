@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe SalesService do
+RSpec.describe VariantsService do
     describe "initialization" do
         
         # it 'exists' do
