@@ -64,17 +64,16 @@ class VariantsService
             low = safe_find_element(variant, "span.inventory__price")&.text
             market = safe_find_element(variant, "span.search-result__market-price--value")&.text
             tcgplayerid = extract_tcgplayerid(url) #needs to be updated, id is same for all items in a search
-  
+     
             variants_array << CardVariant.new(url: url, set: set, name: name, rarity: rarity, count: count, low: low, market: market, tcgplayerid: tcgplayerid)
         end
         variants_array
     end
 
-
     def extract_tcgplayerid(url)
-        match = url.match(/xid=([^&]+)/)
+        match = url.match(/product\/(\d+)/)
         match ? match[1] : nil
-    end
+      end      
 
     def safe_find_element(variant, css_selector) #issue is happening with safe_find_element- it is returning the information from the first card on each page for every field
         begin
