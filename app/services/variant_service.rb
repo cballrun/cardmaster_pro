@@ -5,20 +5,19 @@ class VariantService
     def initialize(search_term)
         @search_term = search_term
         initialize_driver
-        search_variants
-        variants_array = [] 
-        sleep 2
-        variants_array.concat(find_variants) 
-        while next_page_button_visible? && next_page_link do
-            sleep 2
-            variants_array.concat(find_variants) 
-        end
-        variants_array
     end
     
 
     def scrape_variants
-
+        search_variants
+        variants_array = []
+        sleep 2
+        variants_array.concat(find_variants)
+        while next_page_button_visible? & next_page_link do
+            sleep 2
+            variants_array.concat(find_variants)
+        end
+        variants_array
     end
 
     private
