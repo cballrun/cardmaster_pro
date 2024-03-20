@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_14_172454) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_20_170143) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -43,6 +43,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_14_172454) do
     t.string "market_price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "tcgplayerid"
+    t.string "set"
+    t.string "rarity"
   end
 
   add_foreign_key "listings", "variants"
