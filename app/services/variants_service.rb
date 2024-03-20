@@ -2,7 +2,7 @@ require "selenium-webdriver"
 require "uri"
 
 class VariantsService
-    CardVariant = Struct.new(:link, :set, :name, :rarity, :count, :low, :market, :tcgplayerid, keyword_init: true)
+    CardVariant = Struct.new(:url, :set, :name, :rarity, :count, :low, :market, :tcgplayerid, keyword_init: true)
 
     def initialize(search_term)
         @search_term = search_term
@@ -17,6 +17,7 @@ class VariantsService
             sleep 2
             variants_array.concat(find_variants)
         end
+
         variants_array
     end
 
@@ -53,18 +54,20 @@ class VariantsService
         variants = @wait.until do 
             @driver.find_elements(:css, "div.search-result__content")   
         end
-        variants.map do |variant|
-            link = variant.find_element(:css, "a")&.attribute("href") 
+        variants_array = []
+        variants.each do |variant|
+            url = safe_find_element(variant, "a")&.attribute("href") 
             set = safe_find_element(variant, "h4")&.text
             name = safe_find_element(variant, "span.search-result__title")&.text
             rarity = safe_find_element(variant, "section.search-result__rarity")&.text
             count = safe_find_element(variant, "span.inventory__listing-count.inventory__listing-count-block")&.text
             low = safe_find_element(variant, "span.inventory__price")&.text
             market = safe_find_element(variant, "span.search-result__market-price--value")&.text
-            tcgplayerid = extract_tcgplayerid(link)
-
-            CardVariant.new(link: link, set: set, name: name, rarity: rarity, count: count, low: low, market: market, tcgplayerid: tcgplayerid)
+            tcgplayerid = extract_tcgplayerid(url) #needs to be updated, id is same for all items in a search
+  
+            variants_array << CardVariant.new(url: url, set: set, name: name, rarity: rarity, count: count, low: low, market: market, tcgplayerid: tcgplayerid)
         end
+        variants_array
     end
 
 
@@ -73,9 +76,9 @@ class VariantsService
         match ? match[1] : nil
     end
 
-    def safe_find_element(variant, css_selector)
+    def safe_find_element(variant, css_selector) #issue is happening with safe_find_element- it is returning the information from the first card on each page for every field
         begin
-            element = @driver.find_element(css: css_selector)
+            element = variant.find_element(css: css_selector)
         rescue Selenium::WebDriver::Error::NoSuchElementError
             element = nil
         end
