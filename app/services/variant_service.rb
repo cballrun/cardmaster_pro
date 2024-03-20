@@ -6,12 +6,16 @@ class VariantService
         @search_term = search_term
         initialize_driver
         search_variants
-        while next_page_button_visible? do
-            collect_variants
-            next_page_link
-            next_page_button
+        variants_array = [] 
+        sleep 2
+        variants_array.concat(find_variants) 
+        while next_page_button_visible? && next_page_link do
+            sleep 2
+            variants_array.concat(find_variants) 
         end
+        variants_array
     end
+    
 
     def scrape_variants
 
@@ -47,7 +51,7 @@ class VariantService
     end
 
     def find_variants
-        search_results = @wait.until do 
+        @wait.until do 
             @driver.find_elements(:css, "div.search-result__content")   
         end
     end
@@ -87,12 +91,14 @@ class VariantService
     def next_page_link
         pagination_buttons = @driver.find_elements(:css, "a.tcg-button.tcg-button--md.tcg-standard-button.tcg-standard-button--flat")
         next_page_link = pagination_buttons.last.attribute("href")
-        if next_page_link.class == String
-            @driver.get next_page_link
+        if next_page_link && next_page_link != @driver.current_url
+          @driver.get next_page_link
+          true 
         else
-            @driver.quit
+          false 
         end
-    end
+      end
+      
 
     def next_page_button_visible?
         sleep 2
