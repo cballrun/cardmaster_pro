@@ -7,7 +7,4 @@ class VariantsFacade
             Variant.new(url: variant.url, set: variant.set, name: variant.name, rarity: variant.rarity, listing_count: variant.count, low_price: variant.low, market_price: variant.market, tcgplayerid: variant.tcgplayerid)
         end
     end
-
-
-
 end
