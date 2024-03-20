@@ -2,10 +2,11 @@ require 'rails_helper'
 
 RSpec.describe VariantsFacade do
 
-    it 'exists' do
-        search_term = "Charmander"
+    it 'returns an array of variants' do
+        search_term = "Shellder"
         variants_array = VariantsFacade.variants_by_search_term(search_term)
-        binding.pry
+        
         expect(variants_array).to be_a(Array)
+        expect(variants_array.first).to be_a(Variant)
     end
 end
