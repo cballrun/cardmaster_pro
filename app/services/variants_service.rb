@@ -2,19 +2,16 @@ require "selenium-webdriver"
 require "uri"
 
 class VariantsService
+    CardVariant = Struct.new(:link, :set, :name, :rarity, :count, :low, :market, :tcgplayerid, keyword_init: true)
 
-    
     def initialize(search_term)
         @search_term = search_term
         initialize_driver
     end
     
-
     def scrape_variants
         search_variants
-        variants_array = []
-        sleep 2
-        variants_array.concat(find_variants)
+        variants_array = find_variants
         while next_page_button_visible? & next_page_link do
             sleep 2
             variants_array.concat(find_variants)
@@ -52,8 +49,20 @@ class VariantsService
     end
 
     def find_variants
-        @wait.until do 
+        variants = @wait.until do 
             @driver.find_elements(:css, "div.search-result__content")   
+        end
+        variants.map do |variant|
+            link = variant.find_element(:css, "a")&.attribute("href") 
+            set = safe_find_element(variant, "h4")&.text
+            name = safe_find_element(variant, "span.search-result__title")&.text
+            rarity = safe_find_element(variant, "section.search-result__rarity")&.text
+            count = safe_find_element(variant, "span.inventory__listing-count.inventory__listing-count-block")&.text
+            low = safe_find_element(variant, "span.inventory__price")&.text
+            market = safe_find_element(variant, "span.search-result__market-price--value")&.text
+            tcgplayerid = extract_tcgplayerid(link)
+
+            CardVariant.new(link: link, set: set, name: name, rarity: rarity, count: count, low: low, market: market, tcgplayerid: tcgplayerid)
         end
     end
 
