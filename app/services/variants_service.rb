@@ -11,6 +11,7 @@ class VariantsService
     
     def scrape_variants
         search_variants
+        sleep 2
         variants_array = find_variants
         while next_page_button_visible? & next_page_link do
             sleep 2
@@ -66,19 +67,6 @@ class VariantsService
         end
     end
 
-    def collect_variants
-        variants = find_variants
-        variants.each do |variant|
-            link = variant.find_element(:css, "a")&.attribute("href") 
-            set = safe_find_element(variant, "h4")&.text
-            name = safe_find_element(variant, "span.search-result__title")&.text
-            rarity = safe_find_element(variant, "section.search-result__rarity")&.text
-            count = safe_find_element(variant, "span.inventory__listing-count.inventory__listing-count-block")&.text
-            low = safe_find_element(variant, "span.inventory__price")&.text
-            market = safe_find_element(variant, "span.search-result__market-price--value")&.text
-            tcgplayerid = extract_tcgplayerid(link)
-        end
-    end
 
     def extract_tcgplayerid(url)
         match = url.match(/xid=([^&]+)/)
