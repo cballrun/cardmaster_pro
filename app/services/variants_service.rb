@@ -13,11 +13,10 @@ class VariantsService
         search_variants
         sleep 2
         variants_array = find_variants
-        while next_page_button_visible? & next_page_link do
+        while next_page_button_visible? && next_page_link do
             sleep 2
             variants_array.concat(find_variants)
         end
-
         variants_array
     end
 
@@ -58,13 +57,13 @@ class VariantsService
         variants.each do |variant|
             url = safe_find_element(variant, "a")&.attribute("href") 
             set = safe_find_element(variant, "h4")&.text
-            name = safe_find_element(variant, "span.search-result__title")&.text
-            rarity = safe_find_element(variant, "section.search-result__rarity")&.text
+            name = safe_find_element(variant, "span.product-card__title.truncate")&.text
+            rarity = safe_find_element(variant, "section.product-card__rarity")&.text
             count = safe_find_element(variant, "span.inventory__listing-count.inventory__listing-count-block")&.text
             low = safe_find_element(variant, "span.inventory__price")&.text
-            market = safe_find_element(variant, "span.search-result__market-price--value")&.text
-            tcgplayerid = extract_tcgplayerid(url) #needs to be updated, id is same for all items in a search
-     
+            market = safe_find_element(variant, "span.product-card__market-price--value")&.text
+            tcgplayerid = extract_tcgplayerid(url) 
+
             variants_array << CardVariant.new(url: url, set: set, name: name, rarity: rarity, count: count, low: low, market: market, tcgplayerid: tcgplayerid)
         end
         variants_array
@@ -75,7 +74,7 @@ class VariantsService
         match ? match[1] : nil
       end      
 
-    def safe_find_element(variant, css_selector) #issue is happening with safe_find_element- it is returning the information from the first card on each page for every field
+    def safe_find_element(variant, css_selector) 
         begin
             element = variant.find_element(css: css_selector)
         rescue Selenium::WebDriver::Error::NoSuchElementError
