@@ -72,7 +72,7 @@ class VariantsService
     def extract_tcgplayerid(url)
         match = url.match(/product\/(\d+)/)
         match ? match[1] : nil
-      end      
+    end      
 
     def safe_find_element(variant, css_selector) 
         begin
