@@ -13,7 +13,7 @@ RSpec.describe ListingsService do
 
     describe "gettings listings" do
         it 'gets an array of listings for a given url' do
-            url = "https://www.tcgplayer.com/product/106996/pokemon-base-set-shadowless-alakazam?page=1"
+            url = "https://www.tcgplayer.com/product/527937/pokemon-trading-card-game-classic-charmeleon?page=1"
             listings_service = ListingsService.new(url)
             binding.pry
             expect(listings_service).to be_a(Array)
