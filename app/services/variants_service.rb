@@ -49,7 +49,7 @@ class VariantsService
         submit_button.click
     end
 
-    def find_variants
+    def find_variants #this method cannot be split into find_variants and create_variants due to stale element issues
         variants = @wait.until do 
             @driver.find_elements(:css, "div.search-result__content")   
         end
