@@ -12,12 +12,13 @@ class ListingsService
     def scrape_listings
         navigate_to_card_page
         listings_array = []
-        while next_page_button_visible? do
+        while next_page_button_visible? && next_page_link do
             listings_array.concat(create_listings)
-            next_page_link
         end
+        @driver.quit 
         listings_array
     end
+    
 
     def create_listings
         listings = find_listings
@@ -52,11 +53,12 @@ class ListingsService
     def next_page_link
         pagination_buttons = @driver.find_elements(:css, "a.tcg-button.tcg-button--md.tcg-standard-button.tcg-standard-button--flat")
         next_page_link = pagination_buttons.last.attribute("href")
-        if next_page_link.class == String
+        if next_page_link && next_page_link != @driver.current_url
             @driver.get next_page_link
         else
-            @driver.quit #this is fucking up testing need to change
+            return false 
         end
+        true 
     end
 
     def next_page_button
@@ -64,7 +66,7 @@ class ListingsService
     end
 
     def next_page_button_visible?
-        sleep 3
+        sleep 4
         @wait.until { next_page_button.displayed? }
     end
 end
