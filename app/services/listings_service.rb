@@ -1,14 +1,31 @@
 require "selenium-webdriver"
 
 class ListingsService
+
+    CardListing = Struct.new(:condition, :price, :seller, keyword_init: true)
+
     def initialize(url)
         @url = url
         initialize_driver
+    end
+
+    def scrape_listings
         navigate_to_card_page
+        listings_array = []
         while next_page_button_visible? do
-            find_listings
+            listings_array.concat(create_listings)
             next_page_link
-            next_page_button
+        end
+        listings_array
+    end
+
+    def create_listings
+        listings = find_listings
+        listings.map do |listing|
+            condition = listing.find_element(:css, "h3").text
+            price = listing.find_element(:css, "div.listing-item__price").text
+            seller = listing.find_element(:css, "a.seller-info__name").text
+            CardListing.new(condition: condition, price: price, seller: seller)
         end
     end
 
@@ -38,7 +55,7 @@ class ListingsService
         if next_page_link.class == String
             @driver.get next_page_link
         else
-            @driver.quit
+            @driver.quit #this is fucking up testing need to change
         end
     end
 
@@ -47,7 +64,7 @@ class ListingsService
     end
 
     def next_page_button_visible?
-        sleep 2
+        sleep 3
         @wait.until { next_page_button.displayed? }
     end
 end
